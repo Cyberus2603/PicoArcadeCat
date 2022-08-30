@@ -235,6 +235,8 @@ int main() {
           spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
           break;
         }
+        cat_object.set_pos(130, 140);
+        rainbow_object.set_pos(110, 140);
 
         // UI rendering
         led.set_rgb(0, 0, 0);
@@ -321,6 +323,8 @@ int main() {
             }
             case rainbow_star: {
               rainbow_mode = true;
+              cancel_repeating_timer(&rainbow_mode_timer);
+              rainbow_time_value = RAINBOW_TIME_LENGTH;
               add_repeating_timer_ms(-1000, rainbow_time_tick_function, NULL, &rainbow_mode_timer);
               spawned_objects.erase(spawned_objects.begin() + collided_with);
               break;
@@ -378,15 +382,17 @@ int main() {
           spawn_object_alarm = 0;
         }
 
-        cancel_repeating_timer(&rainbow_mode_timer);
-        rainbow_time_value = RAINBOW_TIME_LENGTH;
+        if (rainbow_mode) {
+          cancel_repeating_timer(&rainbow_mode_timer);
+          rainbow_time_value = RAINBOW_TIME_LENGTH;
+        }
 
         // UI rendering
         led.set_rgb(0, 0, 0);
 
-        menu_title_text_location.x = 100;
-        menu_option_1_text_location.x = 110;
-        menu_option_2_text_location.x = 100;
+        menu_title_text_location.x = 90;
+        menu_option_1_text_location.x = 120;
+        menu_option_2_text_location.x = 80;
 
         graphics.set_pen(text_color);
         graphics.set_font(&font14_outline);
