@@ -85,7 +85,7 @@ void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
 
 int main() {
   // --- ELEMENTS DEFINITIONS AND CREATIONS ----
-  enum GameState game_state = game;
+  enum GameState game_state = title;
   //Reward fish definition
   Image_frame reward_fish_frames[1] = {Image_frame(graphics, fish_image, 39)};
   Rect reward_fish_colliders[1] = {Rect(0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE)};
@@ -115,7 +115,7 @@ int main() {
                                Image_frame(graphics, cat_frame_5, 95),
                                Image_frame(graphics, cat_frame_6, 98)};
   Rect cat_colliders[1] = {Rect(0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
-  Object cat_object(cat_frames, 6, cat_colliders, 1, 10, 110);
+  Object cat_object(cat_frames, 6, cat_colliders, 1, 130, 140);
 
   //background_color Stars definitions
   Image_frame bg_stars_frames[4]{Image_frame(graphics, bg_star_frame_1, 8),
@@ -137,7 +137,7 @@ int main() {
 
   //UI Texts Positions
   Point in_game_score_text_location(130, 10);
-  Point rainbow_time_text_location(60, 220);
+  Point rainbow_time_text_location(90, 220);
   Point menu_title_text_location(120, 80);
   Point menu_option_1_text_location(120, 110);
   Point menu_option_2_text_location(120, 130);
@@ -155,10 +155,6 @@ int main() {
   std::string rainbow_mode_time_text;
 
   while (true) {
-
-//    if (button_x.raw()) in_game_score_text_location.y -= 1;
-//    if (button_y.raw()) in_game_score_text_location.y += 1;
-
     // Display cleanup
     graphics.set_pen(background_color);
     graphics.clear();
@@ -180,10 +176,30 @@ int main() {
     // Main program logic
     switch (game_state) {
       case title: {
+        if (button_x.read()) {
+          game_state = game;
+          cat_object.set_pos(20, 110);
+        }
+
+        menu_title_text_location.x = 100;
+        menu_option_1_text_location.x = 85;
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font14_outline);
+        graphics.text("PICO CAT", menu_title_text_location, 320);
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font8);
+        graphics.text("Press X to start", menu_option_1_text_location, 320);
+
+        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter % cat_object.get_frames_size());
 
         break;
       }
       case game: {
+        if (button_x.read()) {
+          game_state = paused;
+        }
         if (button_a.raw()) {
           cat_object.set_pos(cat_object.get_position_x(),
                              (cat_object.get_position_y() > 10) ? (cat_object.get_position_y() - 2)
@@ -191,7 +207,7 @@ int main() {
         }
         if (button_b.raw()) {
           cat_object.set_pos(cat_object.get_position_x(),
-                             (cat_object.get_position_y() < 230) ? (cat_object.get_position_y() + 2)
+                             (cat_object.get_position_y() < 190) ? (cat_object.get_position_y() + 2)
                                                                  : cat_object.get_position_y());
         }
 
@@ -204,13 +220,61 @@ int main() {
 
         if (cat_object.check_collision(reward_fish)) score++;
 
+        // UI Text elements
+        score_text = "Score: " + std::to_string(score);
+        graphics.set_pen(text_color);
+        graphics.set_font(&font6);
+        graphics.text(score_text, in_game_score_text_location, 320);
+
+        rainbow_mode_time_text = "Rainbow left: " + std::to_string(rainbow_time_value);
+        graphics.set_pen(text_color);
+        graphics.set_font(&font6);
+        graphics.text(rainbow_mode_time_text, rainbow_time_text_location, 320);
+
         break;
       }
       case paused: {
+        if (button_x.read()) {
+          game_state = game;
+        }
+
+        menu_title_text_location.x = 120;
+        menu_option_1_text_location.x = 130;
+        menu_option_2_text_location.x = 80;
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font14_outline);
+        graphics.text("PAUSED", menu_title_text_location, 320);
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font8);
+        graphics.text(score_text, menu_option_1_text_location, 320);
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font8);
+        graphics.text("Press X to unpause", menu_option_2_text_location, 320);
 
         break;
       }
       case game_over: {
+        if (button_x.read()) {
+          game_state = title;
+        }
+        menu_title_text_location.x = 100;
+        menu_option_1_text_location.x = 110;
+        menu_option_2_text_location.x = 100;
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font14_outline);
+        graphics.text("GAME OVER", menu_title_text_location, 320);
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font8);
+        graphics.text(score_text, menu_option_1_text_location, 320);
+
+        graphics.set_pen(text_color);
+        graphics.set_font(&font8);
+        graphics.text("Press X to restart", menu_option_2_text_location, 320);
 
         break;
       }
@@ -229,30 +293,6 @@ int main() {
 //    star_object.render(graphics, 120, 120, 0);
 //
 //    rainbow_object.render(graphics, 120, 180, animation_counter % rainbow_object.get_frames_size());
-
-    // UI Text elements
-    score_text = "Score: " + std::to_string(score);
-    graphics.set_pen(text_color);
-    graphics.set_font(&font6);
-    graphics.text(score_text, in_game_score_text_location, 320);
-
-    rainbow_mode_time_text = "Rainbow time left: " + std::to_string(rainbow_time_value);
-    graphics.set_pen(text_color);
-    graphics.set_font(&font6);
-    graphics.text(rainbow_mode_time_text, rainbow_time_text_location, 320);
-
-//    graphics.set_pen(text_color);
-//    graphics.set_font(&font14_outline);
-//    graphics.text("GAME OVER", menu_title_text_location, 320);
-//
-//    graphics.set_pen(text_color);
-//    graphics.set_font(&font8);
-//    graphics.text(score_text, menu_option_1_text_location, 320);
-//
-//    graphics.set_pen(text_color);
-//    graphics.set_font(&font8);
-//    graphics.text("Press X to restart", menu_option_2_text_location, 320);
-
 
     // update screen
     st7789.update(&graphics);
