@@ -322,8 +322,8 @@ int main() {
               break;
             }
             case rainbow_star: {
+              if (rainbow_mode) cancel_repeating_timer(&rainbow_mode_timer);
               rainbow_mode = true;
-              cancel_repeating_timer(&rainbow_mode_timer);
               rainbow_time_value = RAINBOW_TIME_LENGTH;
               add_repeating_timer_ms(-1000, rainbow_time_tick_function, NULL, &rainbow_mode_timer);
               spawned_objects.erase(spawned_objects.begin() + collided_with);
