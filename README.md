@@ -13,7 +13,7 @@ This is a game for raspberry pi pico microcontroller and pimoroni pico display p
 
 #### If you have them installed in different location change PATH variables in CMakeLists.txt in line 3 and 4
 
-2. Build project with cmake.
+2. Build project with cmake
 
 3. Upload it to pico via Drag-and-Drop (.uf2 file) or openocd (.elf file)
 
