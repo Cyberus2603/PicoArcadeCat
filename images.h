@@ -7,7 +7,7 @@
 #define PIXEL_SIZE 2
 
 //(0;0) is left upper corner
-uint8_t fish_image[][7] = {
+const static volatile uint8_t FISH_IMAGE[][7] = {
     //Dark Aqua
     {1 * PIXEL_SIZE, 7 * PIXEL_SIZE, 8 * PIXEL_SIZE, 1 * PIXEL_SIZE, 5, 125, 123},
     {0 * PIXEL_SIZE, 3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 4 * PIXEL_SIZE, 5, 125, 123},
@@ -55,7 +55,7 @@ uint8_t fish_image[][7] = {
     {3 * PIXEL_SIZE, 4 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 255, 255, 255}
 };
 
-uint8_t bg_star_frame_1[][7] = {
+const static volatile uint8_t BG_STAR_FRAME_1[][7] = {
     {0 * PIXEL_SIZE, 3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 0 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
@@ -66,7 +66,7 @@ uint8_t bg_star_frame_1[][7] = {
     {1 * PIXEL_SIZE, 5 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170}
 };
 
-uint8_t bg_star_frame_2[][7] = {
+const static volatile uint8_t BG_STAR_FRAME_2[][7] = {
     {0 * PIXEL_SIZE, 3 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 0 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
@@ -74,21 +74,21 @@ uint8_t bg_star_frame_2[][7] = {
     {3 * PIXEL_SIZE, 5 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 170, 170, 170}
 };
 
-uint8_t bg_star_frame_3[][7] = {
+const static volatile uint8_t BG_STAR_FRAME_3[][7] = {
     {1 * PIXEL_SIZE, 3 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 170, 170, 170},
     {4 * PIXEL_SIZE, 3 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 4 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 170, 170, 170}
 };
 
-uint8_t bg_star_frame_4[][7] = {
+const static volatile uint8_t BG_STAR_FRAME_4[][7] = {
     {2 * PIXEL_SIZE, 3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 170, 170, 170},
     {4 * PIXEL_SIZE, 3 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170},
     {3 * PIXEL_SIZE, 4 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 170, 170, 170}
 };
 
-uint8_t meteorite_image[][7] = {
+const static volatile uint8_t METEORITE_IMAGE[][7] = {
     //Black
     {1 * PIXEL_SIZE, 12 * PIXEL_SIZE, 1 * PIXEL_SIZE, 3 * PIXEL_SIZE, 0, 0, 0},
     {2 * PIXEL_SIZE, 14 * PIXEL_SIZE, 1 * PIXEL_SIZE, 2 * PIXEL_SIZE, 0, 0, 0},
@@ -161,7 +161,7 @@ uint8_t meteorite_image[][7] = {
     {16 * PIXEL_SIZE, 15 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 201, 189, 155}
 };
 
-uint8_t star_image[][7] = {
+const static volatile uint8_t STAR_IMAGE[][7] = {
     //Black
     {0 * PIXEL_SIZE, 6 * PIXEL_SIZE, 6 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0},
     {0 * PIXEL_SIZE, 7 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0},
@@ -261,7 +261,7 @@ uint8_t star_image[][7] = {
     {14 * PIXEL_SIZE, 16 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 255, 61, 242}
 };
 
-uint8_t rainbow_frame_1[][7] = {
+const static volatile uint8_t RAINBOW_FRAME_1[][7] = {
     //Red
     {0 * PIXEL_SIZE, 0 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 255, 0, 0},
     {5 * PIXEL_SIZE, 1 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 255, 0, 0},
@@ -294,7 +294,7 @@ uint8_t rainbow_frame_1[][7] = {
     {15 * PIXEL_SIZE, 16 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 102, 51, 255}
 };
 
-uint8_t rainbow_frame_2[][7] = {
+const static volatile uint8_t RAINBOW_FRAME_2[][7] = {
     //Red
     {0 * PIXEL_SIZE, 1 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 255, 0, 0},
     {5 * PIXEL_SIZE, 0 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 255, 0, 0},
@@ -327,7 +327,7 @@ uint8_t rainbow_frame_2[][7] = {
     {15 * PIXEL_SIZE, 15 * PIXEL_SIZE, 5 * PIXEL_SIZE, 3 * PIXEL_SIZE, 102, 51, 255}
 };
 
-uint8_t cat_frame_1[][7] = {
+const static volatile uint8_t CAT_FRAME_1[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 1 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},
@@ -448,7 +448,7 @@ uint8_t cat_frame_1[][7] = {
     {5 * PIXEL_SIZE, 10 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0}
 };
 
-uint8_t cat_frame_2[][7] = {
+const static volatile uint8_t CAT_FRAME_2[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 1 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},
@@ -563,7 +563,7 @@ uint8_t cat_frame_2[][7] = {
     {4 * PIXEL_SIZE, 13 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0}
 };
 
-uint8_t cat_frame_3[][7] = {
+const static volatile uint8_t CAT_FRAME_3[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 2 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},
@@ -678,7 +678,7 @@ uint8_t cat_frame_3[][7] = {
     {4 * PIXEL_SIZE, 14 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0}
 };
 
-uint8_t cat_frame_4[][7] = {
+const static volatile uint8_t CAT_FRAME_4[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 2 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},
@@ -793,7 +793,7 @@ uint8_t cat_frame_4[][7] = {
     {3 * PIXEL_SIZE, 15 * PIXEL_SIZE, 1 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0}
 };
 
-uint8_t cat_frame_5[][7] = {
+const static volatile uint8_t CAT_FRAME_5[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 2 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},
@@ -910,7 +910,7 @@ uint8_t cat_frame_5[][7] = {
     {4 * PIXEL_SIZE, 13 * PIXEL_SIZE, 2 * PIXEL_SIZE, 1 * PIXEL_SIZE, 0, 0, 0}
 };
 
-uint8_t cat_frame_6[][7] = {
+const static volatile uint8_t CAT_FRAME_6[][7] = {
     //Body
     //Cream
     {7 * PIXEL_SIZE, 2 * PIXEL_SIZE, 19 * PIXEL_SIZE, 16 * PIXEL_SIZE, 255, 204, 153},

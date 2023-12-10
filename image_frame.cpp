@@ -6,7 +6,7 @@
 
 Image_frame::Image_frame() = default;
 
-Image_frame::Image_frame(PicoGraphics_PenRGB332 &graphics, uint8_t array[][7], int array_len) {
+Image_frame::Image_frame(PicoGraphics_PenRGB332 &graphics, const volatile uint8_t array[][7], int array_len) {
   parts = new Image_part[array_len];
   parts_size = array_len;
   for (int i = 0; i < array_len; ++i) {

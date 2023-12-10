@@ -21,7 +21,7 @@ struct Image_part {
 class Image_frame {
  public:
   Image_frame();
-  Image_frame(PicoGraphics_PenRGB332 &graphics, uint8_t array[][7], int array_len);
+  Image_frame(PicoGraphics_PenRGB332 &graphics, const volatile uint8_t array[][7], int array_len);
   int GetPartsSize() const;
   Image_part *GetParts() const;
  protected:

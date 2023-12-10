@@ -28,36 +28,36 @@ Button button_y(PicoDisplay2::Y);
 // --- ELEMENTS DEFINITIONS AND CREATIONS ----
 
 //Reward fish definition
-Image_frame reward_fish_frames[1] = {Image_frame(graphics, fish_image, 39)};
+Image_frame reward_fish_frames[1] = {Image_frame(graphics, FISH_IMAGE, 39)};
 Rect reward_fish_colliders[1] = {Rect(0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE)};
 
 //Meteorites definitions
-Image_frame meteorite_frames[1] = {Image_frame(graphics, meteorite_image, 65)};
+Image_frame meteorite_frames[1] = {Image_frame(graphics, METEORITE_IMAGE, 65)};
 Rect meteorite_colliders[1] = {Rect(0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE)};
 
 //Star definition
-Image_frame star_frames[1] = {Image_frame(graphics, star_image, 89)};
+Image_frame star_frames[1] = {Image_frame(graphics, STAR_IMAGE, 89)};
 Rect star_colliders[1] = {Rect(0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
 
 //Rainbow effect definition
-Image_frame rainbow_frames[2] = {Image_frame(graphics, rainbow_frame_1, 24),
-                                 Image_frame(graphics, rainbow_frame_2, 24)};
+Image_frame rainbow_frames[2] = {Image_frame(graphics, RAINBOW_FRAME_1, 24),
+                                 Image_frame(graphics, RAINBOW_FRAME_2, 24)};
 Rect rainbow_colliders[1] = {Rect(0, 0, 0, 0)};
 
 //Cat definition
-Image_frame cat_frames[6] = {Image_frame(graphics, cat_frame_1, 99),
-                             Image_frame(graphics, cat_frame_2, 93),
-                             Image_frame(graphics, cat_frame_3, 93),
-                             Image_frame(graphics, cat_frame_4, 93),
-                             Image_frame(graphics, cat_frame_5, 95),
-                             Image_frame(graphics, cat_frame_6, 98)};
+Image_frame cat_frames[6] = {Image_frame(graphics, CAT_FRAME_1, 99),
+                             Image_frame(graphics, CAT_FRAME_2, 93),
+                             Image_frame(graphics, CAT_FRAME_3, 93),
+                             Image_frame(graphics, CAT_FRAME_4, 93),
+                             Image_frame(graphics, CAT_FRAME_5, 95),
+                             Image_frame(graphics, CAT_FRAME_6, 98)};
 Rect cat_colliders[1] = {Rect(0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
 
 // Background Stars definitions
-Image_frame bg_stars_frames[4]{Image_frame(graphics, bg_star_frame_1, 8),
-                               Image_frame(graphics, bg_star_frame_2, 5),
-                               Image_frame(graphics, bg_star_frame_3, 4),
-                               Image_frame(graphics, bg_star_frame_4, 4)};
+Image_frame bg_stars_frames[4]{Image_frame(graphics, BG_STAR_FRAME_1, 8),
+                               Image_frame(graphics, BG_STAR_FRAME_2, 5),
+                               Image_frame(graphics, BG_STAR_FRAME_3, 4),
+                               Image_frame(graphics, BG_STAR_FRAME_4, 4)};
 Rect bg_stars_colliders[1]{Rect(0, 0, 0, 0)};
 
 // --- GAME LOGIC ELEMENTS ---
@@ -70,7 +70,8 @@ enum GameState game_state = title;
 unsigned int animation_counter = 0;
 
 bool animation_tick_function(struct repeating_timer *t) {
-  animation_counter++;
+  ++animation_counter;
+  return true;
 }
 
 // Rainbow timer
@@ -85,6 +86,7 @@ bool rainbow_time_tick_function(struct repeating_timer *t) {
     rainbow_time_value = RAINBOW_TIME_LENGTH;
     rainbow_mode = false;
   }
+  return true;
 }
 
 // Object spawner timer
@@ -104,6 +106,7 @@ int64_t object_spawner_function(alarm_id_t id, void *user_data) {
   }
   cancel_alarm(spawn_object_alarm);
   spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
+  return 0;
 }
 
 //Gameplay functions
@@ -413,6 +416,4 @@ int main() {
     // update screen
     st7789.update(&graphics);
   }
-
-  return 0;
 }
