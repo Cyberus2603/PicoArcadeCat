@@ -8,8 +8,7 @@
 #include "libraries/pico_graphics/pico_graphics.hpp"
 #include "drivers/rgbled/rgbled.hpp"
 #include "drivers/button/button.hpp"
-#include "images.h"
-#include "image_frame.h"
+#include "Images.hpp"
 #include "object.h"
 
 using namespace pimoroni;
@@ -28,37 +27,22 @@ Button button_y(PicoDisplay2::Y);
 // --- ELEMENTS DEFINITIONS AND CREATIONS ----
 
 //Reward fish definition
-Image_frame reward_fish_frames[1] = {Image_frame(graphics, FISH_IMAGE, 39)};
-Rect reward_fish_colliders[1] = {Rect(0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE)};
+Rect reward_fish_collider  {Rect(0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE)};
 
 //Meteorites definitions
-Image_frame meteorite_frames[1] = {Image_frame(graphics, METEORITE_IMAGE, 65)};
-Rect meteorite_colliders[1] = {Rect(0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE)};
+Rect meteorite_collider {Rect(0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE)};
 
 //Star definition
-Image_frame star_frames[1] = {Image_frame(graphics, STAR_IMAGE, 89)};
-Rect star_colliders[1] = {Rect(0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
+Rect star_collider {Rect(0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
 
 //Rainbow effect definition
-Image_frame rainbow_frames[2] = {Image_frame(graphics, RAINBOW_FRAME_1, 24),
-                                 Image_frame(graphics, RAINBOW_FRAME_2, 24)};
-Rect rainbow_colliders[1] = {Rect(0, 0, 0, 0)};
+Rect rainbow_collider {Rect(0, 0, 0, 0)};
 
 //Cat definition
-Image_frame cat_frames[6] = {Image_frame(graphics, CAT_FRAME_1, 99),
-                             Image_frame(graphics, CAT_FRAME_2, 93),
-                             Image_frame(graphics, CAT_FRAME_3, 93),
-                             Image_frame(graphics, CAT_FRAME_4, 93),
-                             Image_frame(graphics, CAT_FRAME_5, 95),
-                             Image_frame(graphics, CAT_FRAME_6, 98)};
-Rect cat_colliders[1] = {Rect(0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
+Rect cat_collider {Rect(0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
 
 // Background Stars definitions
-Image_frame bg_stars_frames[4]{Image_frame(graphics, BG_STAR_FRAME_1, 8),
-                               Image_frame(graphics, BG_STAR_FRAME_2, 5),
-                               Image_frame(graphics, BG_STAR_FRAME_3, 4),
-                               Image_frame(graphics, BG_STAR_FRAME_4, 4)};
-Rect bg_stars_colliders[1]{Rect(0, 0, 0, 0)};
+Rect bg_stars_collider {Rect(0, 0, 0, 0)};
 
 // --- GAME LOGIC ELEMENTS ---
 
@@ -98,11 +82,11 @@ int64_t object_spawner_function(alarm_id_t id, void *user_data) {
   int obj_type_to_spawn = rand() % 100;
 
   if (obj_type_to_spawn < 30) {
-    spawned_objects.emplace_back(Object(reward_fish_frames, 1, reward_fish_colliders, 1, fish,  300, (20 + rand()) % 200));
+    spawned_objects.emplace_back(&FISH_VISUAL_ASSET, reward_fish_collider, fish, 300, (20 + rand()) % 200);
   } else if (obj_type_to_spawn < 90) {
-    spawned_objects.emplace_back(Object(meteorite_frames, 1, meteorite_colliders, 1, meteorite, 300, (20 + rand()) % 200));
+    spawned_objects.emplace_back(&METEORITE_VISUAL_ASSET, meteorite_collider, meteorite, 300, (20 + rand()) % 200);
   } else {
-    spawned_objects.emplace_back(Object(star_frames, 1, star_colliders, 1, rainbow_star, 300, (20 + rand()) % 200));
+    spawned_objects.emplace_back(&STAR_VISUAL_ASSET, star_collider, rainbow_star, 300, (20 + rand()) % 200);
   }
   cancel_alarm(spawn_object_alarm);
   spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
@@ -124,7 +108,7 @@ void do_dynamic_objects_motion_tick(unsigned int score) {
 
 void render_dynamic_objects() {
   for (int i = 0; i < spawned_objects.size(); ++i) {
-    spawned_objects[i].render(graphics, spawned_objects[i].get_position_x(), spawned_objects[i].get_position_y(), animation_counter % spawned_objects[i].get_frames_size());
+    spawned_objects[i].render(graphics, spawned_objects[i].get_position_x(), spawned_objects[i].get_position_y(), animation_counter);
   }
 }
 
@@ -177,13 +161,13 @@ void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
 
 int main() {
   // Non-dynamic objects setup
-  Object cat_object(cat_frames, 6, cat_colliders, 1, cat, 130, 140);
+  Object cat_object(&CAT_VISUAL_ASSET, cat_collider, cat, 130, 140);
 
-  Object rainbow_object(rainbow_frames, 2, rainbow_colliders, 1, rainbow, 110, 140);
+  Object rainbow_object(&RAINBOW_VISUAL_ASSET, rainbow_collider, rainbow, 110, 140);
 
   Object bg_stars[30];
   for (int i = 0; i < 30; ++i) {
-    bg_stars[i] = Object(bg_stars_frames, 4, bg_stars_colliders, 1, background_star, 0, 0);
+    bg_stars[i] = Object(&BACKGROUND_STAR_VISUAL_ASSET, bg_stars_collider, background_star, 0, 0);
   }
 
   // --- DISPLAY, LED AND UI ELEMENTS SETUP ---
@@ -221,7 +205,7 @@ int main() {
         bg_stars[4 * i + j].render(graphics,
                                    20 + (50 * i) + (10 * sign_x * sign_y),
                                    20 + (45 * j) + (5 * sign_y),
-                                   int(animation_counter / 5) % bg_stars[4 * i + j].get_frames_size());
+                                   animation_counter + (4 * i + j));
         sign_y *= -1;
       }
       sign_x *= -1;
@@ -255,8 +239,8 @@ int main() {
         graphics.set_font(&font8);
         graphics.text("Press X to start", menu_option_1_text_location, 320);
 
-        rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter % rainbow_object.get_frames_size());
-        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter % cat_object.get_frames_size());
+        rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
+        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
         break;
       }
       case game: {
@@ -286,7 +270,7 @@ int main() {
         // Rainbow mode handling
         if (rainbow_mode) {
           rainbow_object.set_pos(cat_object.get_position_x() - 20, cat_object.get_position_y());
-          rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter % rainbow_object.get_frames_size());
+          rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
 
           rainbow_mode_time_text = "Rainbow left: " + std::to_string(rainbow_time_value);
           graphics.set_pen(text_color);
@@ -300,7 +284,7 @@ int main() {
           led.set_rgb(0, 0, 0);
         }
 
-        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter % cat_object.get_frames_size());
+        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
 
         render_dynamic_objects();
         do_dynamic_objects_motion_tick(score);

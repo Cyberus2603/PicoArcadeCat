@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(PICO_BOARD pico)
+set(PICO_BOARD pico_w)
 
-include(pimoroni_pico_import.cmake)
-include(pico_sdk_import.cmake)
+if (NOT PICO_SDK_PATH)
+    set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
+endif ()
+
+if (NOT PIMORONI_PICO_PATH)
+    set(PIMORONI_PICO_PATH $ENV{PIMORONI_PICO_PATH})
+endif ()
+
+include(${PIMORONI_PICO_PATH}/pimoroni_pico_import.cmake)
+include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 project(No_Internet_cat C CXX ASM)
 set(CMAKE_C_STANDARD 11)
@@ -11,7 +19,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
-add_executable(No_Internet_cat main.cpp object.h object.cpp image_frame.h image_frame.cpp images.h)
+add_executable(No_Internet_cat main.cpp)
+target_include_directories(No_Internet_cat PRIVATE include assets)
+target_sources(No_Internet_cat PRIVATE
+        src/object.cpp
+)
 
 add_subdirectory(${PIMORONI_PICO_PATH}/common pimoroni/common)
 add_subdirectory(${PIMORONI_PICO_PATH}/drivers pimoroni/drivers)
