@@ -2,7 +2,7 @@
 
 This is a game for raspberry pi pico microcontroller and pimoroni pico display pack 2.0.
 
-![](https://github.com/Cyberus2603/PicoArcadeCat/blob/master/img1.jpg)
+![](https://github.com/Cyberus2603/PicoArcadeCat/blob/master/images/img1.jpg)
 
 # Setup
 
