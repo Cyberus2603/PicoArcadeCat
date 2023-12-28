@@ -1,4 +1,4 @@
-#include "object.h"
+#include "object.hpp"
 
 Object::Object() = default;
 
@@ -17,8 +17,7 @@ void Object::render(PicoGraphics_PenRGB332 &graphics, int pos_x, int pos_y, uint
   uint8_t frame_number =  animation_counter % visual_asset->size();
   auto frame_to_render = visual_asset->at(frame_number);
   for (const auto& current_rectangle : frame_to_render) {
-    auto rectangle_color = COLORS.at(current_rectangle.color);
-    graphics.set_pen(rectangle_color.red, rectangle_color.green, rectangle_color.blue);
+    graphics.set_pen(current_rectangle.color.red, current_rectangle.color.green, current_rectangle.color.blue);
     graphics.rectangle({current_rectangle.start_point.first + pos_x, current_rectangle.start_point.second + pos_y, current_rectangle.width, current_rectangle.height});
   }
 }

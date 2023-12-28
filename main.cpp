@@ -9,7 +9,7 @@
 #include "drivers/rgbled/rgbled.hpp"
 #include "drivers/button/button.hpp"
 #include "Images.hpp"
-#include "object.h"
+#include "object.hpp"
 
 using namespace pimoroni;
 
