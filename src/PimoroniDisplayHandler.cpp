@@ -64,7 +64,7 @@ void disableLED() {
   led.set_rgb(0, 0, 0);
 }
 
-// TODO Refactor
+// TODO: Refactor
 // HSV Conversion expects float inputs in the range of 0.00-1.00 for each channel
 // Outputs are rgb in the range 0-255 for each channel
 void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
