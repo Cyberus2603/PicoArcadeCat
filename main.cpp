@@ -1,13 +1,11 @@
-#include <cmath>
-#include <vector>
-#include <cstdlib>
-#include <string>
+#include "GameSettingAndVariables.hpp"
+#include "Images.hpp"
 
 #include "PimoroniDisplayHandler.hpp"
-#include "UI.hpp"
 
-#include "Images.hpp"
+#include "BackgroundStars.hpp"
 #include "object.hpp"
+#include "UI.hpp"
 
 // --- ELEMENTS DEFINITIONS AND CREATIONS ----
 
@@ -32,8 +30,8 @@ pimoroni::Rect bg_stars_collider {0, 0, 0, 0};
 // --- GAME LOGIC ELEMENTS ---
 
 // Game state definition
-enum GameState { game, title, paused, game_over };
-enum GameState game_state = title;
+enum class GameState { game, title, paused, game_over };
+enum GameState game_state {GameState::title};
 
 // Animation timer
 unsigned int animation_counter = 0;
@@ -43,38 +41,34 @@ bool animation_tick_function(struct repeating_timer *t) {
   return true;
 }
 
-// Rainbow timer
-#define RAINBOW_TIME_LENGTH 20
-uint8_t rainbow_time_value = RAINBOW_TIME_LENGTH;
+uint8_t rainbow_time_value = RAINBOW_MODE_TIME_LENGTH;
 bool rainbow_mode = false;
 
 bool rainbow_time_tick_function(struct repeating_timer *t) {
-  if (game_state == paused) return true;
+  if (game_state == GameState::paused) return true;
   rainbow_time_value--;
   if (rainbow_time_value == 0) {
-    rainbow_time_value = RAINBOW_TIME_LENGTH;
+    rainbow_time_value = RAINBOW_MODE_TIME_LENGTH;
     rainbow_mode = false;
   }
   return true;
 }
 
-// Object spawner timer
-#define MIN_SPAWN_TIME 1500
-#define MAX_SPAWN_TIME 5000
 alarm_id_t spawn_object_alarm;
-std::vector<Object> spawned_objects = std::vector<Object>();
+std::vector<Object> spawned_objects;
+
 int64_t object_spawner_function(alarm_id_t id, void *user_data) {
   int obj_type_to_spawn = rand() % 100;
 
   if (obj_type_to_spawn < 30) {
-    spawned_objects.emplace_back(&FISH_VISUAL_ASSET, reward_fish_collider, fish, 300, (20 + rand()) % 200);
+    spawned_objects.emplace_back(&FISH_VISUAL_ASSET, reward_fish_collider, ObjectTypes::FISH, 300, (20 + rand()) % 200);
   } else if (obj_type_to_spawn < 90) {
-    spawned_objects.emplace_back(&METEORITE_VISUAL_ASSET, meteorite_collider, meteorite, 300, (20 + rand()) % 200);
+    spawned_objects.emplace_back(&METEORITE_VISUAL_ASSET, meteorite_collider, ObjectTypes::METEORITE, 300, (20 + rand()) % 200);
   } else {
-    spawned_objects.emplace_back(&STAR_VISUAL_ASSET, star_collider, rainbow_star, 300, (20 + rand()) % 200);
+    spawned_objects.emplace_back(&STAR_VISUAL_ASSET, star_collider, ObjectTypes:: RAINBOW_STAR, 300, (20 + rand()) % 200);
   }
   cancel_alarm(spawn_object_alarm);
-  spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
+  spawn_object_alarm = add_alarm_in_ms((MINIMAL_SPAWNER_INTERVAL + rand()) % MAXIMAL_SPAWNER_INTERVAL, object_spawner_function, NULL, false);
   return 0;
 }
 
@@ -109,28 +103,18 @@ int check_collisions_with_objects(Object &player) {
 
 int main() {
   // Non-dynamic objects setup
-  Object cat_object(&CAT_VISUAL_ASSET, cat_collider, cat, 130, 140);
+  Object cat_object(&CAT_VISUAL_ASSET, cat_collider, ObjectTypes::CAT, 130, 140);
 
-  Object rainbow_object(&RAINBOW_VISUAL_ASSET, rainbow_collider, rainbow, 110, 140);
+  Object rainbow_object(&RAINBOW_VISUAL_ASSET, rainbow_collider, ObjectTypes::RAINBOW, 110, 140);
 
-  Object bg_stars[30];
-  for (int i = 0; i < 30; ++i) {
-    bg_stars[i] = Object(&BACKGROUND_STAR_VISUAL_ASSET, bg_stars_collider, background_star, 0, 0);
-  }
+  generateBackgroundStars();
 
   // --- DISPLAY, LED AND UI ELEMENTS SETUP ---
   initializeDisplay();
 
-  //UI Texts Positions
-  pimoroni::Point in_game_score_text_location(130, 10);
-  pimoroni::Point rainbow_time_text_location(90, 220);
-  pimoroni::Point menu_title_text_location(120, 80);
-  pimoroni::Point menu_option_1_text_location(120, 110);
-  pimoroni::Point menu_option_2_text_location(120, 130);
-
   // Animation ticks setup
   struct repeating_timer animation_timer;
-  add_repeating_timer_ms(-100, animation_tick_function, NULL, &animation_timer);
+  add_repeating_timer_ms(ANIMATION_TICK_PERIOD, animation_tick_function, NULL, &animation_timer);
 
   // Extra variables and timers
   struct repeating_timer rainbow_mode_timer;
@@ -139,35 +123,24 @@ int main() {
   std::string rainbow_mode_time_text;
 
   struct repeating_timer motion_timer;
-  add_repeating_timer_ms(-20, do_dynamic_objects_motion_tick, (void*) score, &motion_timer);
+  add_repeating_timer_ms(MOTION_TICK_PERIOD, do_dynamic_objects_motion_tick, (void*) score, &motion_timer);
 
   while (true) {
     // Display cleanup
     clearDisplay();
 
     //Background Stars animation change
-    int sign_x = 1;
-    int sign_y = 1;
-    for (int i = 0; i < 6; ++i) {
-      for (int j = 0; j < 5; ++j) {
-        bg_stars[4 * i + j].render(
-                                   20 + (50 * i) + (10 * sign_x * sign_y),
-                                   20 + (45 * j) + (5 * sign_y),
-                                   animation_counter + (4 * i + j));
-        sign_y *= -1;
-      }
-      sign_x *= -1;
-    }
+    renderBackgroundStars(animation_counter);
 
     // Main program logic
     switch (game_state) {
-      case title: {
+      case GameState::title: {
         // Input handling
         if (buttonXClicked()) {
-          game_state = game;
+          game_state = GameState::game;
           cat_object.set_pos(20, 110);
 
-          spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
+          spawn_object_alarm = add_alarm_in_ms((MINIMAL_SPAWNER_INTERVAL + rand()) % MAXIMAL_SPAWNER_INTERVAL, object_spawner_function, NULL, false);
           break;
         }
         cat_object.set_pos(130, 140);
@@ -182,10 +155,10 @@ int main() {
         cat_object.render(cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
         break;
       }
-      case game: {
+      case GameState::game: {
         // Input handling
         if (buttonXClicked()) {
-          game_state = paused;
+          game_state = GameState::paused;
 
           if (spawn_object_alarm) {
             cancel_alarm(spawn_object_alarm);
@@ -227,24 +200,24 @@ int main() {
         if (collided_with != INT32_MAX) {
           ObjectTypes collided_type = spawned_objects[collided_with].get_object_type();
           switch (collided_type) {
-            case fish: {
+            case ObjectTypes::FISH: {
               score++;
               spawned_objects.erase(spawned_objects.begin() + collided_with);
               break;
             }
-            case meteorite: {
+            case ObjectTypes::METEORITE: {
               if (rainbow_mode) {
                 spawned_objects.erase(spawned_objects.begin() + collided_with);
               } else {
                 spawned_objects.clear();
-                game_state = game_over;
+                game_state = GameState::game_over;
               }
               break;
             }
-            case rainbow_star: {
+            case ObjectTypes::RAINBOW_STAR: {
               if (rainbow_mode) cancel_repeating_timer(&rainbow_mode_timer);
               rainbow_mode = true;
-              rainbow_time_value = RAINBOW_TIME_LENGTH;
+              rainbow_time_value = RAINBOW_MODE_TIME_LENGTH;
               add_repeating_timer_ms(-1000, rainbow_time_tick_function, NULL, &rainbow_mode_timer);
               spawned_objects.erase(spawned_objects.begin() + collided_with);
               break;
@@ -258,12 +231,12 @@ int main() {
 
         break;
       }
-      case paused: {
+      case GameState::paused: {
         // Input handling
         if (buttonXClicked()) {
-          game_state = game;
+          game_state = GameState::game;
 
-          spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
+          spawn_object_alarm = add_alarm_in_ms((MINIMAL_SPAWNER_INTERVAL + rand()) % MAXIMAL_SPAWNER_INTERVAL, object_spawner_function, NULL, false);
           break;
         }
 
@@ -272,10 +245,10 @@ int main() {
 
         break;
       }
-      case game_over: {
+      case GameState::game_over: {
         // Input handling
         if (buttonXClicked()) {
-          game_state = title;
+          game_state = GameState::title;
           break;
         }
 
@@ -287,7 +260,7 @@ int main() {
 
         if (rainbow_mode) {
           cancel_repeating_timer(&rainbow_mode_timer);
-          rainbow_time_value = RAINBOW_TIME_LENGTH;
+          rainbow_time_value = RAINBOW_MODE_TIME_LENGTH;
         }
 
         // UI rendering

@@ -3,7 +3,7 @@
 #include "libraries/pico_graphics/pico_graphics.hpp"
 #include "ImageDefinitions.hpp"
 
-enum ObjectTypes{ cat, background_star, fish, meteorite, rainbow_star, rainbow };
+enum class ObjectTypes{ CAT, BACKGROUND_STAR, FISH, METEORITE, RAINBOW_STAR, RAINBOW };
 
 class Object {
  public:
