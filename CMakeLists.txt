@@ -22,7 +22,9 @@ pico_sdk_init()
 add_executable(No_Internet_cat main.cpp)
 target_include_directories(No_Internet_cat PRIVATE include assets)
 target_sources(No_Internet_cat PRIVATE
+        src/UI.cpp
         src/object.cpp
+        src/PimoroniDisplayHandler.cpp
 )
 
 add_subdirectory(${PIMORONI_PICO_PATH}/common pimoroni/common)

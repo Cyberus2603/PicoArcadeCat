@@ -1,5 +1,7 @@
 #include "object.hpp"
 
+#include "PimoroniDisplayHandler.hpp"
+
 Object::Object() = default;
 
 Object::Object(const VisualAsset* visual_asset,
@@ -13,13 +15,8 @@ Object::Object(const VisualAsset* visual_asset,
       pos_x(position_x),
       pos_y(position_y) {}
 
-void Object::render(pimoroni::PicoGraphics_PenRGB332 &graphics, int pos_x, int pos_y, uint8_t  animation_counter) {
-  uint8_t frame_number =  animation_counter % visual_asset->size();
-  auto frame_to_render = visual_asset->at(frame_number);
-  for (const auto& current_rectangle : frame_to_render) {
-    graphics.set_pen(current_rectangle.color.red, current_rectangle.color.green, current_rectangle.color.blue);
-    graphics.rectangle({current_rectangle.start_point.first + pos_x, current_rectangle.start_point.second + pos_y, current_rectangle.width, current_rectangle.height});
-  }
+void Object::render(int pos_x, int pos_y, unsigned int animation_counter) {
+  placeVisualAssetAtPosition(visual_asset, {pos_x, pos_y} , animation_counter);
 }
 
 int Object::get_position_x() {

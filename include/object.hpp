@@ -13,7 +13,7 @@ class Object {
          enum ObjectTypes object_type,
          int position_x = 0,
          int position_y = 0);
-  void render(pimoroni::PicoGraphics_PenRGB332 &graphics, int pos_x, int pos_y, uint8_t animation_counter);
+  void render(int pos_x, int pos_y, unsigned int animation_counter);
   int get_position_x();
   int get_position_y();
   pimoroni::Rect get_collider();

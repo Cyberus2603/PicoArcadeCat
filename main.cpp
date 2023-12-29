@@ -3,24 +3,11 @@
 #include <cstdlib>
 #include <string>
 
-#include "libraries/pico_display_2/pico_display_2.hpp"
-#include "drivers/st7789/st7789.hpp"
-#include "libraries/pico_graphics/pico_graphics.hpp"
-#include "drivers/rgbled/rgbled.hpp"
-#include "drivers/button/button.hpp"
+#include "PimoroniDisplayHandler.hpp"
+#include "UI.hpp"
+
 #include "Images.hpp"
 #include "object.hpp"
-
-// HARDWARE SETUP
-pimoroni::ST7789 st7789(320, 240, pimoroni::ROTATE_0, false, get_spi_pins(pimoroni::BG_SPI_FRONT));
-pimoroni::PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
-
-pimoroni::RGBLED led(pimoroni::PicoDisplay2::LED_R, pimoroni::PicoDisplay2::LED_G, pimoroni::PicoDisplay2::LED_B);
-
-pimoroni::Button button_a(pimoroni::PicoDisplay2::A);
-pimoroni::Button button_b(pimoroni::PicoDisplay2::B);
-pimoroni::Button button_x(pimoroni::PicoDisplay2::X);
-pimoroni::Button button_y(pimoroni::PicoDisplay2::Y);
 
 // --- ELEMENTS DEFINITIONS AND CREATIONS ----
 
@@ -41,52 +28,6 @@ pimoroni::Rect cat_collider {0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE};
 
 // Background Stars definitions
 pimoroni::Rect bg_stars_collider {0, 0, 0, 0};
-
-void placeTextAtPosition(const std::string& text, const pimoroni::Point &position, const bitmap::font_t& font = font8, const ColorParts& text_color = Colors::WHITE) {
-  graphics.set_pen(text_color.red, text_color.green, text_color.blue);
-  graphics.set_font(&font);
-  graphics.text(text, position, 320);
-}
-
-const pimoroni::Point IN_GAME_SCORE_TEXT_LOCATION {130, 10};
-const pimoroni::Point RAINBOW_TIME_TEXT_LOCATION {90, 220};
-const pimoroni::Point TITLE_HEADER_TEXT_LOCATION {100, 80};
-const pimoroni::Point TITLE_PLAY_TEXT_LOCATION {85, 110};
-const pimoroni::Point PAUSED_HEADER_TEXT_LOCATION {120, 80};
-const pimoroni::Point PAUSED_SCORE_TEXT_LOCATION {130, 110};
-const pimoroni::Point PAUSED_RESUME_TEXT_LOCATION {80, 130};
-const pimoroni::Point GAME_OVER_HEADER_TEXT_LOCATION {90, 80};
-const pimoroni::Point GAME_OVER_SCORE_TEXT_LOCATION {130, 110};
-const pimoroni::Point GAME_OVER_RESTART_TEXT_LOCATION {80, 130};
-
-void renderScoreText(unsigned int score) {
-  std::string score_text = "Score: " + std::to_string(score);
-  placeTextAtPosition(score_text, IN_GAME_SCORE_TEXT_LOCATION, font6);
-}
-
-void renderRainbowModeText(uint8_t time_left) {
-  std::string rainbow_mode_time_text = "Rainbow left: " + std::to_string(time_left);
-  placeTextAtPosition(rainbow_mode_time_text, RAINBOW_TIME_TEXT_LOCATION, font6);
-}
-
-void renderTitleText() {
-  placeTextAtPosition("PICO CAT", TITLE_HEADER_TEXT_LOCATION, font14_outline);
-  placeTextAtPosition("Press X to start", TITLE_PLAY_TEXT_LOCATION);
-}
-
-void renderPausedGameText(unsigned int score) {
-  std::string score_text = "Score: " + std::to_string(score);
-  placeTextAtPosition("PAUSED", PAUSED_HEADER_TEXT_LOCATION, font14_outline);
-  placeTextAtPosition(score_text, PAUSED_SCORE_TEXT_LOCATION);
-  placeTextAtPosition("Press X to unpause", PAUSED_RESUME_TEXT_LOCATION);
-}
-
-void renderGameOverText(unsigned int score) {
-  std::string score_text = "Score: " + std::to_string(score);
-  placeTextAtPosition("GAME OVER", GAME_OVER_HEADER_TEXT_LOCATION, font14_outline);
-  placeTextAtPosition(score_text, GAME_OVER_SCORE_TEXT_LOCATION);
-  placeTextAtPosition("Press X to restart", GAME_OVER_RESTART_TEXT_LOCATION);
-}
 
 // --- GAME LOGIC ELEMENTS ---
 
@@ -153,7 +94,7 @@ bool do_dynamic_objects_motion_tick(struct repeating_timer *t) {
 
 void render_dynamic_objects() {
   for (int i = 0; i < spawned_objects.size(); ++i) {
-    spawned_objects[i].render(graphics, spawned_objects[i].get_position_x(), spawned_objects[i].get_position_y(), animation_counter);
+    spawned_objects[i].render( spawned_objects[i].get_position_x(), spawned_objects[i].get_position_y(), animation_counter);
   }
 }
 
@@ -164,44 +105,6 @@ int check_collisions_with_objects(Object &player) {
     }
   }
   return INT32_MAX;
-}
-
-// HSV Conversion expects float inputs in the range of 0.00-1.00 for each channel
-// Outputs are rgb in the range 0-255 for each channel
-void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
-  float i = floor(h * 6.0f);
-  float f = h * 6.0f - i;
-  v *= 255.0f;
-  uint8_t p = v * (1.0f - s);
-  uint8_t q = v * (1.0f - f * s);
-  uint8_t t = v * (1.0f - (1.0f - f) * s);
-
-  switch (int(i) % 6) {
-    case 0: r = v;
-      g = t;
-      b = p;
-      break;
-    case 1: r = q;
-      g = v;
-      b = p;
-      break;
-    case 2: r = p;
-      g = v;
-      b = t;
-      break;
-    case 3: r = p;
-      g = q;
-      b = v;
-      break;
-    case 4: r = t;
-      g = p;
-      b = v;
-      break;
-    case 5: r = v;
-      g = p;
-      b = q;
-      break;
-  }
 }
 
 int main() {
@@ -216,9 +119,7 @@ int main() {
   }
 
   // --- DISPLAY, LED AND UI ELEMENTS SETUP ---
-  st7789.set_backlight(255);
-  pimoroni::Pen background_color = graphics.create_pen(0, 50, 103);
-  pimoroni::Pen text_color = graphics.create_pen(255, 255, 255);
+  initializeDisplay();
 
   //UI Texts Positions
   pimoroni::Point in_game_score_text_location(130, 10);
@@ -242,15 +143,14 @@ int main() {
 
   while (true) {
     // Display cleanup
-    graphics.set_pen(background_color);
-    graphics.clear();
+    clearDisplay();
 
     //Background Stars animation change
     int sign_x = 1;
     int sign_y = 1;
     for (int i = 0; i < 6; ++i) {
       for (int j = 0; j < 5; ++j) {
-        bg_stars[4 * i + j].render(graphics,
+        bg_stars[4 * i + j].render(
                                    20 + (50 * i) + (10 * sign_x * sign_y),
                                    20 + (45 * j) + (5 * sign_y),
                                    animation_counter + (4 * i + j));
@@ -263,7 +163,7 @@ int main() {
     switch (game_state) {
       case title: {
         // Input handling
-        if (button_x.read()) {
+        if (buttonXClicked()) {
           game_state = game;
           cat_object.set_pos(20, 110);
 
@@ -274,17 +174,17 @@ int main() {
         rainbow_object.set_pos(110, 140);
 
         // UI rendering
-        led.set_rgb(0, 0, 0);
+        disableLED();
 
         renderTitleText();
 
-        rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
-        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
+        rainbow_object.render(rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
+        cat_object.render(cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
         break;
       }
       case game: {
         // Input handling
-        if (button_x.read()) {
+        if (buttonXClicked()) {
           game_state = paused;
 
           if (spawn_object_alarm) {
@@ -293,12 +193,12 @@ int main() {
           }
           break;
         }
-        if (button_a.raw()) {
+        if (buttonAPressed()) {
           cat_object.set_pos(cat_object.get_position_x(),
                              (cat_object.get_position_y() > 10) ? (cat_object.get_position_y() - 2)
                                                                 : cat_object.get_position_y());
         }
-        if (button_b.raw()) {
+        if (buttonBPressed()) {
           cat_object.set_pos(cat_object.get_position_x(),
                              (cat_object.get_position_y() < 190) ? (cat_object.get_position_y() + 2)
                                                                  : cat_object.get_position_y());
@@ -309,18 +209,16 @@ int main() {
         // Rainbow mode handling
         if (rainbow_mode) {
           rainbow_object.set_pos(cat_object.get_position_x() - 20, cat_object.get_position_y());
-          rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
+          rainbow_object.render(rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
 
           renderRainbowModeText(rainbow_time_value);
 
-          uint8_t led_r = 0, led_g = 0, led_b = 0;
-          from_hsv((float) pimoroni::millis() / 5000.0f, 1.0f, 0.5f + sinf(pimoroni::millis() / 100.0f / 3.14159f) * 0.5f, led_r, led_g, led_b);
-          led.set_rgb(led_r, led_g, led_b);
+          setLEDColorHSV((float) pimoroni::millis() / 5000.0f, 1.0f, 0.5f + sinf(pimoroni::millis() / 100.0f / 3.14159f) * 0.5f);
         } else {
-          led.set_rgb(0, 0, 0);
+          disableLED();
         }
 
-        cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
+        cat_object.render(cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
 
         render_dynamic_objects();
 
@@ -362,7 +260,7 @@ int main() {
       }
       case paused: {
         // Input handling
-        if (button_x.read()) {
+        if (buttonXClicked()) {
           game_state = game;
 
           spawn_object_alarm = add_alarm_in_ms((MIN_SPAWN_TIME + rand()) % MAX_SPAWN_TIME, object_spawner_function, NULL, false);
@@ -376,7 +274,7 @@ int main() {
       }
       case game_over: {
         // Input handling
-        if (button_x.read()) {
+        if (buttonXClicked()) {
           game_state = title;
           break;
         }
@@ -393,7 +291,7 @@ int main() {
         }
 
         // UI rendering
-        led.set_rgb(0, 0, 0);
+        disableLED();
 
         renderGameOverText(score);
 
@@ -402,6 +300,6 @@ int main() {
     }
 
     // update screen
-    st7789.update(&graphics);
+    updateDisplay();
   }
 }
