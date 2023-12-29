@@ -12,8 +12,6 @@ struct ColoredRectangle {
   ColorParts color;
 };
 
-
-
 using VisualAssetFrame = std::vector<ColoredRectangle>;
 
 using VisualAsset = std::vector<VisualAssetFrame>;

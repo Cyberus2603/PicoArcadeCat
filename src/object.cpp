@@ -46,7 +46,9 @@ void Object::set_pos(int pos_x, int pos_y) {
 }
 
 bool Object::check_collision(Object& object_to_check) {
-  return collider.intersects(object_to_check.get_collider());
+  pimoroni::Rect current_collider_with_position {pos_x, pos_y, collider.w, collider.h};
+  pimoroni::Rect collider_to_check_with_position {object_to_check.pos_x, object_to_check.pos_y, object_to_check.collider.w, object_to_check.collider.h};
+  return current_collider_with_position.intersects(collider_to_check_with_position);
 }
 
 

@@ -94,8 +94,8 @@ int64_t object_spawner_function(alarm_id_t id, void *user_data) {
 }
 
 //Gameplay functions
-void do_dynamic_objects_motion_tick(unsigned int score) {
-  uint8_t objects_speed = 2 + int(score / 4);
+bool do_dynamic_objects_motion_tick(struct repeating_timer *t) {
+  uint8_t objects_speed = 2 + int((unsigned int)t->user_data / 4);
   std::vector<int> tmp_ids = std::vector<int>();
   for (int i = 0; i < spawned_objects.size(); ++i) {
     spawned_objects[i].set_pos(spawned_objects[i].get_position_x() - objects_speed, spawned_objects[i].get_position_y());
@@ -104,6 +104,7 @@ void do_dynamic_objects_motion_tick(unsigned int score) {
   for (int i = 0; i < tmp_ids.size(); ++i) {
     spawned_objects.erase(spawned_objects.begin() + tmp_ids[i]);
   }
+  return true;
 }
 
 void render_dynamic_objects() {
@@ -112,7 +113,7 @@ void render_dynamic_objects() {
   }
 }
 
-int check_collisions_with_objects(Object player) {
+int check_collisions_with_objects(Object &player) {
   for (int i = 0; i < spawned_objects.size(); ++i) {
     if (player.check_collision(spawned_objects[i])) {
       return i;
@@ -191,6 +192,9 @@ int main() {
   unsigned int score = 0;
   std::string score_text;
   std::string rainbow_mode_time_text;
+
+  struct repeating_timer motion_timer;
+  add_repeating_timer_ms(-20, do_dynamic_objects_motion_tick, (void*) score, &motion_timer);
 
   while (true) {
     // Display cleanup
@@ -287,7 +291,6 @@ int main() {
         cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
 
         render_dynamic_objects();
-        do_dynamic_objects_motion_tick(score);
 
         int collided_with = check_collisions_with_objects(cat_object);
 
