@@ -12,5 +12,5 @@ struct Object {
   pimoroni::Point current_position;
 
   void render(unsigned int animation_counter);
-  bool check_collision(Object& object_to_check);
+  bool collidedWith(Object& object_to_check);
 };

@@ -3,7 +3,7 @@
 #include "assets/GameObjectsPrototypes.hpp"
 #include "GameSettingAndVariables.hpp"
 #include "Object.hpp"
-#include "GameStates.hpp"
+#include "GameState.hpp"
 
 #include <pico/time.h>
 

@@ -31,7 +31,7 @@ target_sources(No_Internet_cat PRIVATE
         src/assets/GameObjectsPrototypes.cpp
         src/PimoroniDisplayHandler.cpp
         src/GameTimers.cpp
-        src/GameStates.cpp
+        src/GameState.cpp
         src/Object.cpp
         src/BackgroundStars.cpp
         src/UI.cpp

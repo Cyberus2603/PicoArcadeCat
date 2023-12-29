@@ -3,22 +3,22 @@
 #include "assets/GameObjectsPrototypes.hpp"
 #include "GameSettingAndVariables.hpp"
 #include "GameTimers.hpp"
-#include "GameStates.hpp"
+#include "GameState.hpp"
 #include "BackgroundStars.hpp"
 #include "Object.hpp"
 #include "UI.hpp"
 
-//Gameplay functions
-void render_dynamic_objects() {
+
+void renderSpawnedObjects() {
   unsigned int animation_counter = getAnimationTimerValue();
   for (int i = 0; i < spawned_objects.size(); ++i) {
     spawned_objects[i].render(animation_counter);
   }
 }
 
-int check_collisions_with_objects(Object &player) {
+int checkCollisionsWithObjects(Object &player) {
   for (int i = 0; i < spawned_objects.size(); ++i) {
-    if (player.check_collision(spawned_objects[i])) {
+    if (player.collidedWith(spawned_objects[i])) {
       return i;
     }
   }
@@ -104,9 +104,9 @@ int main() {
 
         player_cat.render(animation_counter);
 
-        render_dynamic_objects();
+        renderSpawnedObjects();
 
-        int collided_with = check_collisions_with_objects(player_cat);
+        int collided_with = checkCollisionsWithObjects(player_cat);
 
         if (collided_with != INT32_MAX) {
           ObjectTypes collided_type = spawned_objects[collided_with].object_type;
