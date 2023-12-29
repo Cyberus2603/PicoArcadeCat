@@ -3,7 +3,7 @@
 Object::Object() = default;
 
 Object::Object(const VisualAsset* visual_asset,
-               Rect collider,
+               pimoroni::Rect collider,
                enum ObjectTypes object_type,
                int position_x,
                int position_y)
@@ -13,7 +13,7 @@ Object::Object(const VisualAsset* visual_asset,
       pos_x(position_x),
       pos_y(position_y) {}
 
-void Object::render(PicoGraphics_PenRGB332 &graphics, int pos_x, int pos_y, uint8_t  animation_counter) {
+void Object::render(pimoroni::PicoGraphics_PenRGB332 &graphics, int pos_x, int pos_y, uint8_t  animation_counter) {
   uint8_t frame_number =  animation_counter % visual_asset->size();
   auto frame_to_render = visual_asset->at(frame_number);
   for (const auto& current_rectangle : frame_to_render) {
@@ -31,7 +31,7 @@ int Object::get_position_y() {
 }
 
 
-Rect Object::get_collider() {
+pimoroni::Rect Object::get_collider() {
   return collider;
 }
 

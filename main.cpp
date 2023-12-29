@@ -11,38 +11,82 @@
 #include "Images.hpp"
 #include "object.hpp"
 
-using namespace pimoroni;
-
 // HARDWARE SETUP
-ST7789 st7789(320, 240, ROTATE_0, false, get_spi_pins(BG_SPI_FRONT));
-PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
+pimoroni::ST7789 st7789(320, 240, pimoroni::ROTATE_0, false, get_spi_pins(pimoroni::BG_SPI_FRONT));
+pimoroni::PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
 
-RGBLED led(PicoDisplay2::LED_R, PicoDisplay2::LED_G, PicoDisplay2::LED_B);
+pimoroni::RGBLED led(pimoroni::PicoDisplay2::LED_R, pimoroni::PicoDisplay2::LED_G, pimoroni::PicoDisplay2::LED_B);
 
-Button button_a(PicoDisplay2::A);
-Button button_b(PicoDisplay2::B);
-Button button_x(PicoDisplay2::X);
-Button button_y(PicoDisplay2::Y);
+pimoroni::Button button_a(pimoroni::PicoDisplay2::A);
+pimoroni::Button button_b(pimoroni::PicoDisplay2::B);
+pimoroni::Button button_x(pimoroni::PicoDisplay2::X);
+pimoroni::Button button_y(pimoroni::PicoDisplay2::Y);
 
 // --- ELEMENTS DEFINITIONS AND CREATIONS ----
 
 //Reward fish definition
-Rect reward_fish_collider  {Rect(0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE)};
+pimoroni::Rect reward_fish_collider {0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE};
 
 //Meteorites definitions
-Rect meteorite_collider {Rect(0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE)};
+pimoroni::Rect meteorite_collider {0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE};
 
 //Star definition
-Rect star_collider {Rect(0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
+pimoroni::Rect star_collider {0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE};
 
 //Rainbow effect definition
-Rect rainbow_collider {Rect(0, 0, 0, 0)};
+pimoroni::Rect rainbow_collider {0, 0, 0, 0};
 
 //Cat definition
-Rect cat_collider {Rect(0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE)};
+pimoroni::Rect cat_collider {0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE};
 
 // Background Stars definitions
-Rect bg_stars_collider {Rect(0, 0, 0, 0)};
+pimoroni::Rect bg_stars_collider {0, 0, 0, 0};
+
+void placeTextAtPosition(const std::string& text, const pimoroni::Point &position, const bitmap::font_t& font = font8, const ColorParts& text_color = Colors::WHITE) {
+  graphics.set_pen(text_color.red, text_color.green, text_color.blue);
+  graphics.set_font(&font);
+  graphics.text(text, position, 320);
+}
+
+const pimoroni::Point IN_GAME_SCORE_TEXT_LOCATION {130, 10};
+const pimoroni::Point RAINBOW_TIME_TEXT_LOCATION {90, 220};
+const pimoroni::Point TITLE_HEADER_TEXT_LOCATION {100, 80};
+const pimoroni::Point TITLE_PLAY_TEXT_LOCATION {85, 110};
+const pimoroni::Point PAUSED_HEADER_TEXT_LOCATION {120, 80};
+const pimoroni::Point PAUSED_SCORE_TEXT_LOCATION {130, 110};
+const pimoroni::Point PAUSED_RESUME_TEXT_LOCATION {80, 130};
+const pimoroni::Point GAME_OVER_HEADER_TEXT_LOCATION {90, 80};
+const pimoroni::Point GAME_OVER_SCORE_TEXT_LOCATION {130, 110};
+const pimoroni::Point GAME_OVER_RESTART_TEXT_LOCATION {80, 130};
+
+void renderScoreText(unsigned int score) {
+  std::string score_text = "Score: " + std::to_string(score);
+  placeTextAtPosition(score_text, IN_GAME_SCORE_TEXT_LOCATION, font6);
+}
+
+void renderRainbowModeText(uint8_t time_left) {
+  std::string rainbow_mode_time_text = "Rainbow left: " + std::to_string(time_left);
+  placeTextAtPosition(rainbow_mode_time_text, RAINBOW_TIME_TEXT_LOCATION, font6);
+}
+
+void renderTitleText() {
+  placeTextAtPosition("PICO CAT", TITLE_HEADER_TEXT_LOCATION, font14_outline);
+  placeTextAtPosition("Press X to start", TITLE_PLAY_TEXT_LOCATION);
+}
+
+void renderPausedGameText(unsigned int score) {
+  std::string score_text = "Score: " + std::to_string(score);
+  placeTextAtPosition("PAUSED", PAUSED_HEADER_TEXT_LOCATION, font14_outline);
+  placeTextAtPosition(score_text, PAUSED_SCORE_TEXT_LOCATION);
+  placeTextAtPosition("Press X to unpause", PAUSED_RESUME_TEXT_LOCATION);
+}
+
+void renderGameOverText(unsigned int score) {
+  std::string score_text = "Score: " + std::to_string(score);
+  placeTextAtPosition("GAME OVER", GAME_OVER_HEADER_TEXT_LOCATION, font14_outline);
+  placeTextAtPosition(score_text, GAME_OVER_SCORE_TEXT_LOCATION);
+  placeTextAtPosition("Press X to restart", GAME_OVER_RESTART_TEXT_LOCATION);
+}
 
 // --- GAME LOGIC ELEMENTS ---
 
@@ -173,15 +217,15 @@ int main() {
 
   // --- DISPLAY, LED AND UI ELEMENTS SETUP ---
   st7789.set_backlight(255);
-  Pen background_color = graphics.create_pen(0, 50, 103);
-  Pen text_color = graphics.create_pen(255, 255, 255);
+  pimoroni::Pen background_color = graphics.create_pen(0, 50, 103);
+  pimoroni::Pen text_color = graphics.create_pen(255, 255, 255);
 
   //UI Texts Positions
-  Point in_game_score_text_location(130, 10);
-  Point rainbow_time_text_location(90, 220);
-  Point menu_title_text_location(120, 80);
-  Point menu_option_1_text_location(120, 110);
-  Point menu_option_2_text_location(120, 130);
+  pimoroni::Point in_game_score_text_location(130, 10);
+  pimoroni::Point rainbow_time_text_location(90, 220);
+  pimoroni::Point menu_title_text_location(120, 80);
+  pimoroni::Point menu_option_1_text_location(120, 110);
+  pimoroni::Point menu_option_2_text_location(120, 130);
 
   // Animation ticks setup
   struct repeating_timer animation_timer;
@@ -232,16 +276,7 @@ int main() {
         // UI rendering
         led.set_rgb(0, 0, 0);
 
-        menu_title_text_location.x = 100;
-        menu_option_1_text_location.x = 85;
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font14_outline);
-        graphics.text("PICO CAT", menu_title_text_location, 320);
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font8);
-        graphics.text("Press X to start", menu_option_1_text_location, 320);
+        renderTitleText();
 
         rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
         cat_object.render(graphics, cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
@@ -276,13 +311,10 @@ int main() {
           rainbow_object.set_pos(cat_object.get_position_x() - 20, cat_object.get_position_y());
           rainbow_object.render(graphics, rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
 
-          rainbow_mode_time_text = "Rainbow left: " + std::to_string(rainbow_time_value);
-          graphics.set_pen(text_color);
-          graphics.set_font(&font6);
-          graphics.text(rainbow_mode_time_text, rainbow_time_text_location, 320);
+          renderRainbowModeText(rainbow_time_value);
 
           uint8_t led_r = 0, led_g = 0, led_b = 0;
-          from_hsv((float) millis() / 5000.0f, 1.0f, 0.5f + sinf(millis() / 100.0f / 3.14159f) * 0.5f, led_r, led_g, led_b);
+          from_hsv((float) pimoroni::millis() / 5000.0f, 1.0f, 0.5f + sinf(pimoroni::millis() / 100.0f / 3.14159f) * 0.5f, led_r, led_g, led_b);
           led.set_rgb(led_r, led_g, led_b);
         } else {
           led.set_rgb(0, 0, 0);
@@ -324,10 +356,7 @@ int main() {
         }
 
         // UI Text elements
-        score_text = "Score: " + std::to_string(score);
-        graphics.set_pen(text_color);
-        graphics.set_font(&font6);
-        graphics.text(score_text, in_game_score_text_location, 320);
+        renderScoreText(score);
 
         break;
       }
@@ -341,21 +370,7 @@ int main() {
         }
 
         // UI rendering
-        menu_title_text_location.x = 120;
-        menu_option_1_text_location.x = 130;
-        menu_option_2_text_location.x = 80;
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font14_outline);
-        graphics.text("PAUSED", menu_title_text_location, 320);
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font8);
-        graphics.text(score_text, menu_option_1_text_location, 320);
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font8);
-        graphics.text("Press X to unpause", menu_option_2_text_location, 320);
+        renderPausedGameText(score);
 
         break;
       }
@@ -380,21 +395,7 @@ int main() {
         // UI rendering
         led.set_rgb(0, 0, 0);
 
-        menu_title_text_location.x = 90;
-        menu_option_1_text_location.x = 120;
-        menu_option_2_text_location.x = 80;
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font14_outline);
-        graphics.text("GAME OVER", menu_title_text_location, 320);
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font8);
-        graphics.text(score_text, menu_option_1_text_location, 320);
-
-        graphics.set_pen(text_color);
-        graphics.set_font(&font8);
-        graphics.text("Press X to restart", menu_option_2_text_location, 320);
+        renderGameOverText(score);
 
         break;
       }
