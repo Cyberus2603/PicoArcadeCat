@@ -1,27 +1,36 @@
 #include "BackgroundStars.hpp"
 
+#include "assets/GameObjectsPrototypes.hpp"
 #include "GameSettingAndVariables.hpp"
-#include "object.hpp"
-#include "Images.hpp"
 
-Object background_stars[30];
+#include "PimoroniDisplayHandler.hpp"
+#include "Object.hpp"
+
+Object background_stars[BACKGROUND_STARS_COUNT];
 
 void generateBackgroundStars() {
   for (int i = 0; i < BACKGROUND_STARS_COUNT; ++i) {
-    background_stars[i] = Object(&BACKGROUND_STAR_VISUAL_ASSET, {0, 0, 0, 0}, ObjectTypes::BACKGROUND_STAR, 0, 0);
+    Object background_star(BACKGROUND_STAR_OBJECT_PROTOTYPE);
+    background_stars[i] = background_star;
+  }
+
+  const int NUMBER_OF_ROWS = (BACKGROUND_STARS_COUNT % STARS_IN_ROW) ? ((BACKGROUND_STARS_COUNT / STARS_IN_ROW) + 1) : (BACKGROUND_STARS_COUNT / STARS_IN_ROW);
+  const int DISTANCE_BETWEEN_STARS_X = SCREEN_WIDTH / (STARS_IN_ROW + 1);
+  const int DISTANCE_BETWEEN_STARS_Y = SCREEN_HEIGHT / (NUMBER_OF_ROWS + 1);
+  const int TILT_DISTANCE {10};
+  int star_counter {0};
+  for (int i = 0; i < STARS_IN_ROW; ++i) {
+    for (int j = 0; j < NUMBER_OF_ROWS; ++j) {
+      int position_x {DISTANCE_BETWEEN_STARS_X + (DISTANCE_BETWEEN_STARS_X * i) + ((star_counter % 2) * -TILT_DISTANCE)};
+      int position_y {DISTANCE_BETWEEN_STARS_Y + (DISTANCE_BETWEEN_STARS_Y * j) - ((star_counter % 2) * -TILT_DISTANCE)};
+      background_stars[star_counter].current_position = {position_x, position_y};
+      ++star_counter;
+    }
   }
 }
 
 void renderBackgroundStars(unsigned int animation_counter) {
-  int sign_x = 1;
-  int sign_y = 1;
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 5; ++j) {
-      background_stars[4 * i + j].render(20 + (50 * i) + (10 * sign_x * sign_y),
-                                         20 + (45 * j) + (5 * sign_y),
-                                         animation_counter + (4 * i + j));
-      sign_y *= -1;
-    }
-    sign_x *= -1;
+  for (int i = 0; i < BACKGROUND_STARS_COUNT; ++i) {
+    background_stars[i].render(animation_counter + i);
   }
 }

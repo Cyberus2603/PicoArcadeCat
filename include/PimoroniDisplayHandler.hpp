@@ -4,6 +4,9 @@
 
 #include "ImageDefinitions.hpp"
 
+const unsigned int SCREEN_WIDTH {320};
+const unsigned int SCREEN_HEIGHT {240};
+
 void initializeDisplay();
 void clearDisplay();
 void updateDisplay();

@@ -5,7 +5,7 @@
 #include <rgbled.hpp>
 #include <button.hpp>
 
-pimoroni::ST7789 st7789(320, 240, pimoroni::ROTATE_0, false, get_spi_pins(pimoroni::BG_SPI_FRONT));
+pimoroni::ST7789 st7789(SCREEN_WIDTH, SCREEN_HEIGHT, pimoroni::ROTATE_0, false, get_spi_pins(pimoroni::BG_SPI_FRONT));
 pimoroni::PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
 pimoroni::RGBLED led(pimoroni::PicoDisplay2::LED_R, pimoroni::PicoDisplay2::LED_G, pimoroni::PicoDisplay2::LED_B);
 pimoroni::Button button_a(pimoroni::PicoDisplay2::A);
@@ -64,6 +64,7 @@ void disableLED() {
   led.set_rgb(0, 0, 0);
 }
 
+// TODO Refactor
 // HSV Conversion expects float inputs in the range of 0.00-1.00 for each channel
 // Outputs are rgb in the range 0-255 for each channel
 void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {

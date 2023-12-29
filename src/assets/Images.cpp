@@ -1,4 +1,4 @@
-#include "Images.hpp"
+#include "assets/Images.hpp"
 
 const VisualAsset FISH_VISUAL_ASSET {
     {

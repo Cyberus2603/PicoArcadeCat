@@ -1,31 +1,12 @@
 #include "GameSettingAndVariables.hpp"
-#include "Images.hpp"
+#include "assets/Images.hpp"
+#include "assets/GameObjectsPrototypes.hpp"
 
 #include "PimoroniDisplayHandler.hpp"
 
 #include "BackgroundStars.hpp"
-#include "object.hpp"
+#include "Object.hpp"
 #include "UI.hpp"
-
-// --- ELEMENTS DEFINITIONS AND CREATIONS ----
-
-//Reward fish definition
-pimoroni::Rect reward_fish_collider {0, 0, 13 * PIXEL_SIZE, 8 * PIXEL_SIZE};
-
-//Meteorites definitions
-pimoroni::Rect meteorite_collider {0, 0, 23 * PIXEL_SIZE, 21 * PIXEL_SIZE};
-
-//Star definition
-pimoroni::Rect star_collider {0, 0, 18 * PIXEL_SIZE, 18 * PIXEL_SIZE};
-
-//Rainbow effect definition
-pimoroni::Rect rainbow_collider {0, 0, 0, 0};
-
-//Cat definition
-pimoroni::Rect cat_collider {0, 0, 32 * PIXEL_SIZE, 18 * PIXEL_SIZE};
-
-// Background Stars definitions
-pimoroni::Rect bg_stars_collider {0, 0, 0, 0};
 
 // --- GAME LOGIC ELEMENTS ---
 
@@ -61,11 +42,17 @@ int64_t object_spawner_function(alarm_id_t id, void *user_data) {
   int obj_type_to_spawn = rand() % 100;
 
   if (obj_type_to_spawn < 30) {
-    spawned_objects.emplace_back(&FISH_VISUAL_ASSET, reward_fish_collider, ObjectTypes::FISH, 300, (20 + rand()) % 200);
+    Object spawned_fish(FISH_OBJECT_PROTOTYPE);
+    spawned_fish.current_position = {300, (20 + rand()) % 200};
+    spawned_objects.emplace_back(spawned_fish);
   } else if (obj_type_to_spawn < 90) {
-    spawned_objects.emplace_back(&METEORITE_VISUAL_ASSET, meteorite_collider, ObjectTypes::METEORITE, 300, (20 + rand()) % 200);
+    Object spawned_meteorite(METEORITE_OBJECT_PROTOTYPE);
+    spawned_meteorite.current_position = {300, (20 + rand()) % 200};
+    spawned_objects.emplace_back(spawned_meteorite);
   } else {
-    spawned_objects.emplace_back(&STAR_VISUAL_ASSET, star_collider, ObjectTypes:: RAINBOW_STAR, 300, (20 + rand()) % 200);
+    Object spawned_star(STAR_OBJECT_PROTOTYPE);
+    spawned_star.current_position = {300, (20 + rand()) % 200};
+    spawned_objects.emplace_back(spawned_star);
   }
   cancel_alarm(spawn_object_alarm);
   spawn_object_alarm = add_alarm_in_ms((MINIMAL_SPAWNER_INTERVAL + rand()) % MAXIMAL_SPAWNER_INTERVAL, object_spawner_function, NULL, false);
@@ -75,20 +62,23 @@ int64_t object_spawner_function(alarm_id_t id, void *user_data) {
 //Gameplay functions
 bool do_dynamic_objects_motion_tick(struct repeating_timer *t) {
   uint8_t objects_speed = 2 + int((unsigned int)t->user_data / 4);
-  std::vector<int> tmp_ids = std::vector<int>();
+  std::vector<int> tmp_ids;
   for (int i = 0; i < spawned_objects.size(); ++i) {
-    spawned_objects[i].set_pos(spawned_objects[i].get_position_x() - objects_speed, spawned_objects[i].get_position_y());
-    if (spawned_objects[i].get_position_x() < 20) tmp_ids.emplace_back(i);
+    spawned_objects[i].current_position = {spawned_objects[i].current_position.x - objects_speed, spawned_objects[i].current_position.y};
+    if (spawned_objects[i].current_position.x < 20) {
+      tmp_ids.emplace_back(i);
+    }
   }
   for (int i = 0; i < tmp_ids.size(); ++i) {
-    spawned_objects.erase(spawned_objects.begin() + tmp_ids[i]);
+    auto element_to_delete = spawned_objects.begin() + tmp_ids[i];
+    spawned_objects.erase(element_to_delete);
   }
   return true;
 }
 
 void render_dynamic_objects() {
   for (int i = 0; i < spawned_objects.size(); ++i) {
-    spawned_objects[i].render( spawned_objects[i].get_position_x(), spawned_objects[i].get_position_y(), animation_counter);
+    spawned_objects[i].render(animation_counter);
   }
 }
 
@@ -102,10 +92,9 @@ int check_collisions_with_objects(Object &player) {
 }
 
 int main() {
-  // Non-dynamic objects setup
-  Object cat_object(&CAT_VISUAL_ASSET, cat_collider, ObjectTypes::CAT, 130, 140);
-
-  Object rainbow_object(&RAINBOW_VISUAL_ASSET, rainbow_collider, ObjectTypes::RAINBOW, 110, 140);
+  // Objects setup
+  Object player_cat(CAT_OBJECT_PROTOTYPE);
+  Object rainbow_tail(RAINBOW_OBJECT_PROTOTYPE);
 
   generateBackgroundStars();
 
@@ -138,21 +127,21 @@ int main() {
         // Input handling
         if (buttonXClicked()) {
           game_state = GameState::game;
-          cat_object.set_pos(20, 110);
+          player_cat.current_position = {20, 110};
 
           spawn_object_alarm = add_alarm_in_ms((MINIMAL_SPAWNER_INTERVAL + rand()) % MAXIMAL_SPAWNER_INTERVAL, object_spawner_function, NULL, false);
           break;
         }
-        cat_object.set_pos(130, 140);
-        rainbow_object.set_pos(110, 140);
+        player_cat.current_position = {130, 140};
+        rainbow_tail.current_position = {110, 140};
 
         // UI rendering
         disableLED();
 
         renderTitleText();
 
-        rainbow_object.render(rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
-        cat_object.render(cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
+        rainbow_tail.render(animation_counter);
+        player_cat.render(animation_counter);
         break;
       }
       case GameState::game: {
@@ -167,22 +156,22 @@ int main() {
           break;
         }
         if (buttonAPressed()) {
-          cat_object.set_pos(cat_object.get_position_x(),
-                             (cat_object.get_position_y() > 10) ? (cat_object.get_position_y() - 2)
-                                                                : cat_object.get_position_y());
+          player_cat.current_position = {player_cat.current_position.x,
+                             (player_cat.current_position.y > 10) ? (player_cat.current_position.y - 2)
+                                                                : player_cat.current_position.y};
         }
         if (buttonBPressed()) {
-          cat_object.set_pos(cat_object.get_position_x(),
-                             (cat_object.get_position_y() < 190) ? (cat_object.get_position_y() + 2)
-                                                                 : cat_object.get_position_y());
+          player_cat.current_position = {player_cat.current_position.x,
+                             (player_cat.current_position.y < 190) ? (player_cat.current_position.y + 2)
+                                                                 : player_cat.current_position.y};
         }
 
         // --- GAME LOGIC ---
 
         // Rainbow mode handling
         if (rainbow_mode) {
-          rainbow_object.set_pos(cat_object.get_position_x() - 20, cat_object.get_position_y());
-          rainbow_object.render(rainbow_object.get_position_x(), rainbow_object.get_position_y(), animation_counter);
+          rainbow_tail.current_position = {player_cat.current_position.x - 20, player_cat.current_position.y};
+          rainbow_tail.render(animation_counter);
 
           renderRainbowModeText(rainbow_time_value);
 
@@ -191,14 +180,14 @@ int main() {
           disableLED();
         }
 
-        cat_object.render(cat_object.get_position_x(), cat_object.get_position_y(), animation_counter);
+        player_cat.render(animation_counter);
 
         render_dynamic_objects();
 
-        int collided_with = check_collisions_with_objects(cat_object);
+        int collided_with = check_collisions_with_objects(player_cat);
 
         if (collided_with != INT32_MAX) {
-          ObjectTypes collided_type = spawned_objects[collided_with].get_object_type();
+          ObjectTypes collided_type = spawned_objects[collided_with].object_type;
           switch (collided_type) {
             case ObjectTypes::FISH: {
               score++;
@@ -214,7 +203,7 @@ int main() {
               }
               break;
             }
-            case ObjectTypes::RAINBOW_STAR: {
+            case ObjectTypes::STAR: {
               if (rainbow_mode) cancel_repeating_timer(&rainbow_mode_timer);
               rainbow_mode = true;
               rainbow_time_value = RAINBOW_MODE_TIME_LENGTH;

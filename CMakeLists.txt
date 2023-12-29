@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.13)
 
 set(PICO_BOARD pico_w)
 
-set(CMAKE_C_FLAGS_DEBUG "-Og")
+set(CMAKE_C_FLAGS_DEBUG "-Og -g -gdwarf-3 -gstrict-dwarf -gsplit-dwarf")
+set(CMAKE_CXX_FLAGS_DEBUG "-Og -g -gdwarf-3 -gstrict-dwarf -gsplit-dwarf")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 if (NOT PICO_SDK_PATH)
     set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
@@ -22,12 +25,13 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 add_executable(No_Internet_cat main.cpp)
-target_include_directories(No_Internet_cat PRIVATE include assets)
+target_include_directories(No_Internet_cat PRIVATE include)
 target_sources(No_Internet_cat PRIVATE
-        assets/Images.cpp
+        src/assets/Images.cpp
+        src/assets/GameObjectsPrototypes.cpp
         src/BackgroundStars.cpp
         src/UI.cpp
-        src/object.cpp
+        src/Object.cpp
         src/PimoroniDisplayHandler.cpp
 )
 
