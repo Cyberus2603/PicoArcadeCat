@@ -25,6 +25,26 @@ const unsigned int METEORITE_SPAWN_RATIO {60};
 const unsigned int FISH_SPAWN_RATIO {30};
 const unsigned int STAR_SPAWN_RATIO {10};
 
+// ----- INITIAL POSITIONS AND LIMITS-----
+// Gameplay limits for player movement
+const unsigned int MINIMAL_CAT_POSITION_Y {10};
+const unsigned int MAXIMAL_CAT_POSITION_Y {190}; // Not as close to screen height due to cat size
+
+// Initial Positions
+const unsigned int INITIAL_IN_GAME_CAT_POSITION_X {20};
+const unsigned int INITIAL_IN_GAME_CAT_POSITION_Y {110};
+const unsigned int TITLE_SCREEN_CAT_POSITION_X {130};
+const unsigned int TITLE_SCREEN_CAT_POSITION_Y {140};
+const unsigned int TITLE_SCREEN_RAINBOW_POSITION_X {110};
+const unsigned int TITLE_SCREEN_RAINBOW_POSITION_Y {140};
+
+// ----- Auxiliary constants -----
+// Rainbow object offset from cat position
+const int32_t RAINBOW_OFFSET {20};
+
+// When to delete objects from screen when player avoids or misses them
+const int32_t OBJECTS_POSITION_X_DELETE_THRESHOLD {20};
+
 // ----- TIMERS SETTINGS -----
 //For why these values are negative check Pico API (https://www.raspberrypi.com/documentation/pico-sdk/high_level.html#repeating_timer)
 

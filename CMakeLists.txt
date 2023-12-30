@@ -18,15 +18,15 @@ endif ()
 include(${PIMORONI_PICO_PATH}/pimoroni_pico_import.cmake)
 include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
-project(No_Internet_cat C CXX ASM)
+project(Pico_Cat C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
-add_executable(No_Internet_cat main.cpp)
-target_include_directories(No_Internet_cat PRIVATE include)
-target_sources(No_Internet_cat PRIVATE
+add_executable(Pico_Cat main.cpp)
+target_include_directories(Pico_Cat PRIVATE include)
+target_sources(Pico_Cat PRIVATE
         src/assets/Images.cpp
         src/assets/GameObjectsPrototypes.cpp
         src/game_internals/AnimationTimer.cpp
@@ -43,9 +43,9 @@ add_subdirectory(${PIMORONI_PICO_PATH}/common pimoroni/common)
 add_subdirectory(${PIMORONI_PICO_PATH}/drivers pimoroni/drivers)
 add_subdirectory(${PIMORONI_PICO_PATH}/libraries pimoroni/libraries)
 
-pico_enable_stdio_usb(No_Internet_cat 1)
-pico_enable_stdio_uart(No_Internet_cat 1)
+pico_enable_stdio_usb(Pico_Cat 1)
+pico_enable_stdio_uart(Pico_Cat 1)
 
-pico_add_extra_outputs(No_Internet_cat)
+pico_add_extra_outputs(Pico_Cat)
 
-target_link_libraries(No_Internet_cat pico_stdlib hardware_spi hardware_pwm hardware_dma rgbled button pico_display_2 st7789 pico_graphics)
+target_link_libraries(Pico_Cat pico_stdlib hardware_spi hardware_pwm hardware_dma rgbled button pico_display_2 st7789 pico_graphics)

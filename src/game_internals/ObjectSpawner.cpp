@@ -3,6 +3,7 @@
 #include "assets/GameObjectsPrototypes.hpp"
 #include "game_internals/GameSettingAndVariables.hpp"
 #include "game_internals/Object.hpp"
+#include "game_internals/AnimationTimer.hpp"
 
 #include <pico/time.h>
 
@@ -40,5 +41,12 @@ void startObjectSpawnerTimer(){
 void stopObjectSpawnerTimer(){
   if (spawn_object_alarm) {
     cancel_alarm(spawn_object_alarm);
+  }
+}
+
+void renderSpawnedObjects() {
+  unsigned int animation_counter = getAnimationTimerValue();
+  for (int i = 0; i < spawned_objects.size(); ++i) {
+    spawned_objects[i].render(animation_counter);
   }
 }

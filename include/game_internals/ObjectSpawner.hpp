@@ -7,3 +7,4 @@
 extern std::vector<Object> spawned_objects;
 void startObjectSpawnerTimer();
 void stopObjectSpawnerTimer();
+void renderSpawnedObjects();

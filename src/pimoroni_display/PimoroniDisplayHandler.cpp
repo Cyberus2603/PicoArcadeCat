@@ -64,10 +64,9 @@ void disableLED() {
   led.set_rgb(0, 0, 0);
 }
 
-// TODO: Refactor
 // HSV Conversion expects float inputs in the range of 0.00-1.00 for each channel
 // Outputs are rgb in the range 0-255 for each channel
-void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
+ColorParts convertHSVtoRGB(float h, float s, float v) {
   float i = floor(h * 6.0f);
   float f = h * 6.0f - i;
   v *= 255.0f;
@@ -76,38 +75,32 @@ void from_hsv(float h, float s, float v, uint8_t &r, uint8_t &g, uint8_t &b) {
   uint8_t t = v * (1.0f - (1.0f - f) * s);
 
   switch (int(i) % 6) {
-    case 0: r = v;
-      g = t;
-      b = p;
-      break;
-    case 1: r = q;
-      g = v;
-      b = p;
-      break;
-    case 2: r = p;
-      g = v;
-      b = t;
-      break;
-    case 3: r = p;
-      g = q;
-      b = v;
-      break;
-    case 4: r = t;
-      g = p;
-      b = v;
-      break;
-    case 5: r = v;
-      g = p;
-      b = q;
-      break;
+    case 0: {
+      return {(uint8_t) v,(uint8_t) t,(uint8_t) p};
+    }
+    case 1: {
+      return {(uint8_t) q,(uint8_t) v,(uint8_t) p};
+    }
+    case 2: {
+      return {(uint8_t) p,(uint8_t) v,(uint8_t) t};
+    }
+    case 3: {
+      return {(uint8_t) p,(uint8_t) q,(uint8_t) v};
+    }
+    case 4: {
+      return {(uint8_t) t,(uint8_t) p,(uint8_t) v};
+    }
+    case 5: {
+      return {(uint8_t) v,(uint8_t) p,(uint8_t) q};
+    }
   }
+  return {255,255,255};
 }
 
 
 void setLEDColorHSV(float hue, float saturation, float value) {
-  uint8_t led_r = 0, led_g = 0, led_b = 0;
-  from_hsv(hue, saturation, value, led_r, led_g, led_b);
-  led.set_rgb(led_r, led_g, led_b);
+  ColorParts converted_color = convertHSVtoRGB(hue, saturation, value);
+  led.set_rgb(converted_color.red, converted_color.green, converted_color.blue);
 }
 
 void placeTextAtPosition(const std::string& text, const pimoroni::Point &position, const bitmap::font_t& font, const ColorParts& text_color) {
