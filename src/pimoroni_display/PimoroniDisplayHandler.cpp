@@ -1,4 +1,4 @@
-#include "PimoroniDisplayHandler.hpp"
+#include "pimoroni_display/PimoroniDisplayHandler.hpp"
 
 #include <st7789.hpp>
 #include <pico_display_2.hpp>

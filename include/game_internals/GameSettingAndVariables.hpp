@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 // ----- GAMEPLAY SETTINGS -----
 
 // Object spawner settings. Time in [ms]

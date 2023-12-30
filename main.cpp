@@ -1,12 +1,15 @@
-#include "PimoroniDisplayHandler.hpp"
+#include "pimoroni_display/PimoroniDisplayHandler.hpp"
 
 #include "assets/GameObjectsPrototypes.hpp"
-#include "GameSettingAndVariables.hpp"
-#include "GameTimers.hpp"
-#include "GameState.hpp"
-#include "BackgroundStars.hpp"
-#include "Object.hpp"
-#include "UI.hpp"
+#include "game_internals/GameSettingAndVariables.hpp"
+#include "game_internals/AnimationTimer.hpp"
+#include "game_internals/RainbowMode.hpp"
+#include "game_internals/ObjectMotion.hpp"
+#include "game_internals/ObjectSpawner.hpp"
+#include "game_internals/GameState.hpp"
+#include "game_internals/BackgroundStars.hpp"
+#include "game_internals/Object.hpp"
+#include "game_internals/UI.hpp"
 
 
 void renderSpawnedObjects() {
@@ -135,7 +138,6 @@ int main() {
           }
         }
 
-        // UI Text elements
         renderScoreText(score);
 
         break;
@@ -148,7 +150,6 @@ int main() {
           break;
         }
 
-        // UI rendering
         renderPausedGameText(score);
 
         break;

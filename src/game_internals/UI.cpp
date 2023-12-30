@@ -1,6 +1,6 @@
-#include "UI.hpp"
+#include "game_internals/UI.hpp"
 
-#include "PimoroniDisplayHandler.hpp"
+#include "pimoroni_display/PimoroniDisplayHandler.hpp"
 
 const pimoroni::Point IN_GAME_SCORE_TEXT_LOCATION {130, 10};
 const pimoroni::Point RAINBOW_TIME_TEXT_LOCATION {90, 220};

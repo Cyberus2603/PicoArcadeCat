@@ -1,10 +1,10 @@
-#include "BackgroundStars.hpp"
+#include "game_internals/BackgroundStars.hpp"
 
 #include "assets/GameObjectsPrototypes.hpp"
-#include "GameSettingAndVariables.hpp"
+#include "game_internals/GameSettingAndVariables.hpp"
 
-#include "PimoroniDisplayHandler.hpp"
-#include "Object.hpp"
+#include "pimoroni_display/PimoroniDisplayHandler.hpp"
+#include "game_internals/Object.hpp"
 
 Object background_stars[BACKGROUND_STARS_COUNT];
 

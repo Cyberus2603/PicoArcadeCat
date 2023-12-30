@@ -1,6 +1,6 @@
-#include "Object.hpp"
+#include "game_internals/Object.hpp"
 
-#include "PimoroniDisplayHandler.hpp"
+#include "pimoroni_display/PimoroniDisplayHandler.hpp"
 
 void Object::render(unsigned int animation_counter) {
   placeVisualAssetAtPosition(visual_asset, current_position, animation_counter);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <pico_graphics.hpp>
-#include "ImageDefinitions.hpp"
+#include "pimoroni_display/ImageDefinitions.hpp"
 
 enum class ObjectTypes{ CAT, BACKGROUND_STAR, FISH, METEORITE, STAR, RAINBOW };
 

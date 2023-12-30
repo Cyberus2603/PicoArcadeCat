@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ColorDefinitons.hpp"
+#include "pimoroni_display/ColorDefinitons.hpp"
 
 #include <vector>
 #include <utility>

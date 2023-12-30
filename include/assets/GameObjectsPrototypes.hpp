@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.hpp"
+#include "game_internals/Object.hpp"
 
 extern const Object FISH_OBJECT_PROTOTYPE;
 extern const Object BACKGROUND_STAR_OBJECT_PROTOTYPE;

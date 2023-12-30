@@ -29,12 +29,15 @@ target_include_directories(No_Internet_cat PRIVATE include)
 target_sources(No_Internet_cat PRIVATE
         src/assets/Images.cpp
         src/assets/GameObjectsPrototypes.cpp
-        src/PimoroniDisplayHandler.cpp
-        src/GameTimers.cpp
-        src/GameState.cpp
-        src/Object.cpp
-        src/BackgroundStars.cpp
-        src/UI.cpp
+        src/game_internals/AnimationTimer.cpp
+        src/game_internals/ObjectMotion.cpp
+        src/game_internals/RainbowMode.cpp
+        src/game_internals/ObjectSpawner.cpp
+        src/game_internals/GameState.cpp
+        src/game_internals/Object.cpp
+        src/game_internals/BackgroundStars.cpp
+        src/game_internals/UI.cpp
+        src/pimoroni_display/PimoroniDisplayHandler.cpp
 )
 
 add_subdirectory(${PIMORONI_PICO_PATH}/common pimoroni/common)

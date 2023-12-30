@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImageDefinitions.hpp"
+#include "pimoroni_display/ImageDefinitions.hpp"
 
 const uint8_t PIXEL_SIZE{2};
 
