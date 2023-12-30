@@ -6,7 +6,6 @@
 #include "game_internals/RainbowMode.hpp"
 #include "game_internals/ObjectMotion.hpp"
 #include "game_internals/ObjectSpawner.hpp"
-#include "game_internals/GameState.hpp"
 #include "game_internals/BackgroundStars.hpp"
 #include "game_internals/Object.hpp"
 #include "game_internals/UI.hpp"
@@ -28,9 +27,12 @@ int checkCollisionsWithObjects(Object &player) {
   return INT32_MAX;
 }
 
+enum class GameState { IN_GAME, TITLE, PAUSED, GAME_OVER };
+
 int main() {
   Object player_cat(CAT_OBJECT_PROTOTYPE);
   Object rainbow_tail(RAINBOW_OBJECT_PROTOTYPE);
+  GameState game_state {GameState::TITLE};
 
   generateBackgroundStars();
 
@@ -63,12 +65,13 @@ int main() {
         player_cat.current_position = {130, 140};
         rainbow_tail.current_position = {110, 140};
 
-        disableLED();
-
-        renderTitleText();
-
         rainbow_tail.render(animation_counter);
         player_cat.render(animation_counter);
+
+        // UI and LED handling
+        disableLED();
+        renderTitleText();
+
         break;
       }
       case GameState::IN_GAME: {
@@ -76,6 +79,7 @@ int main() {
         if (buttonXClicked()) {
           game_state = GameState::PAUSED;
 
+          pauseRainbowMode();
           stopObjectSpawnerTimer();
           break;
         }
@@ -138,6 +142,7 @@ int main() {
           }
         }
 
+        // UI handling
         renderScoreText(score);
 
         break;
@@ -146,10 +151,12 @@ int main() {
         // Input handling
         if (buttonXClicked()) {
           game_state = GameState::IN_GAME;
+          resumeRainbowMode();
           startObjectSpawnerTimer();
           break;
         }
 
+        // UI handling
         renderPausedGameText(score);
 
         break;
@@ -161,11 +168,14 @@ int main() {
           break;
         }
 
+        // Condition based game systems reset
         stopObjectSpawnerTimer();
         stopRainbowMode();
 
+        // UI and LED handling
         disableLED();
         renderGameOverText(score);
+
         break;
       }
     }

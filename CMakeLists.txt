@@ -33,7 +33,6 @@ target_sources(No_Internet_cat PRIVATE
         src/game_internals/ObjectMotion.cpp
         src/game_internals/RainbowMode.cpp
         src/game_internals/ObjectSpawner.cpp
-        src/game_internals/GameState.cpp
         src/game_internals/Object.cpp
         src/game_internals/BackgroundStars.cpp
         src/game_internals/UI.cpp
