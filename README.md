@@ -4,7 +4,7 @@ This is a game for raspberry pi pico microcontroller and Pimoroni pico display p
 
 Short video presenting the game can be found below:
 
-[![Short video presentation](https://github.com/Cyberus2603/PicoArcadeCat/blob/master/github_images/img1.jpg)](https://www.youtube.com/watch?v=1AZOfAV31o0)
+[![Short video presentation](github_images/img1.jpg)](https://www.youtube.com/watch?v=1AZOfAV31o0)
 
 # Setup
 
